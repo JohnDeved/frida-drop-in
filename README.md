@@ -45,5 +45,5 @@ Frappe Loader
 - [**Fr**]ida + [**Java**]Script (coffee)
 - https://www.flaticon.com/free-icon/frappe_571491
 
-![image](https://github.com/JohnDeved/frida-drop-in/assets/24187269/c2251f4c-2986-4733-9283-b38993452ee6)
+![frappe](https://github.com/JohnDeved/frida-drop-in/assets/24187269/9519c640-eb6b-49a5-a3ce-280e7b02bdc0)
 
