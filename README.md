@@ -9,6 +9,21 @@ frida.attach('game.exe').then(async session => {
 })
 ```
 
+possible setup:
+ - download "-loader.exe"
+ - rename to "game-loader.exe"
+ - place next to "game.exe"
+ - create folder "mods"
+ - create js scripts eg "mods/god-mode.ts"
+ - loader will start game.exe, and attach. using its own file name for matching
+ - loader will scan the relative directory for mods/*[.js|.ts]
+ - loader will inject scripts into process session
+
+how installing mods might look like:
+ - download mod.zip
+ - extract at root of game folder (extracts game-loader.exe and mods/*)
+ - run new game-loader.exe
+
 should create POC in node, then move to go or rust for compiling a sharable release.
 
 go (no windows?)
