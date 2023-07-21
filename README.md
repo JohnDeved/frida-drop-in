@@ -39,3 +39,11 @@ rust (no simple attach?)
  - https://docs.rs/frida/latest/frida/struct.Device.html#method.attach
  - https://docs.rs/frida/latest/frida/struct.Session.html#method.create_script
  - https://docs.rs/frida/latest/frida/struct.Script.html#method.load
+
+Frappe Loader
+-
+- [**Fr**]ida + [**Java**]Script (coffee)
+- https://www.flaticon.com/free-icon/frappe_571491
+
+![image](https://github.com/JohnDeved/frida-drop-in/assets/24187269/c2251f4c-2986-4733-9283-b38993452ee6)
+
