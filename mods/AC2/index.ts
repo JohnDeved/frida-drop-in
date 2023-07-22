@@ -42,15 +42,15 @@ class ACCityChest {
   }
 
   hintDeposit (value: number) {
-    game._thisCalls.CityChest_hintDeposit(this.address, value)
+    game._thisCall.CityChest_hintDeposit(this.address, value)
   }
 
   hintFull () {
-    game._thisCalls.CityChest_hintFull(this.address)
+    game._thisCall.CityChest_hintFull(this.address)
   }
 
   hintCityValue () {
-    game._thisCalls.CityChest_hintCityValue(this.address)
+    game._thisCall.CityChest_hintCityValue(this.address)
   }
 }
 
@@ -63,7 +63,7 @@ class ACGame {
     return new ACCityChest(this.module.base.add(0x1E16744).readPointer())
   }
 
-  _thisCalls = {
+  _thisCall = {
     /* 0x0074b2c0 - void __thiscall CityChest::hintDeposit(CityChest *this, int) */
     CityChest_hintDeposit: new NativeFunction(this.module.base.add(0x0074b2c0), 'void', ['pointer', 'int32'], { abi: 'thiscall' }),
     /* 0x0074b310 - void __thiscall CityChest::hintFull(CityChest *this) */
