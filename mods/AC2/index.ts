@@ -1,4 +1,5 @@
 /// <reference path="index.d.ts" />
+/** @noResolve */
 
 class ACTimer {
   constructor (public address: NativePointer) {}
