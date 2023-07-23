@@ -89,6 +89,7 @@ function prop (offset: number, type: dataNumberTypes | dataLengthTypes, length?:
   return function <This extends NativeClass, Return>() {
     return {
       get(this: This) {
+        if (!this.address[`read${type}`]) throw new Error(`Cannot read ${type}`)
         if (length) {
           type = type as dataLengthTypes
           return this.address.add(offset)[`read${type}`](length) as any
@@ -97,6 +98,7 @@ function prop (offset: number, type: dataNumberTypes | dataLengthTypes, length?:
         return this.address.add(offset)[`read${type}`]() as any
       },
       set(this: This, value: Return) {
+        if (!this.address[`write${type}`]) throw new Error(`Cannot write ${type}`)
         this.address.add(offset)[`write${type}`](value as any)
       },
     }
