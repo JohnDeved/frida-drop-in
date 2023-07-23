@@ -1,43 +1,29 @@
 /// <reference path="index.d.ts" />
-/** @noResolve */
 
-class ACTimer {
+// make implementable class for "native" classes that must be instantiated with a pointer
+export abstract class NativeClass {
   constructor (public address: NativePointer) {}
-
-  /** 0x5c8 - int */
-  get currentTimeMs () {
-    return this.address.add(0x5c8).readInt()
-  }
 }
 
-class ACCityChest {
-  constructor (public address: NativePointer) {}
-  
-  /** 0xC - int */
-  get cityValue () {
-    return this.address.add(0xC).readInt()
-  }
+class ACTimer extends NativeClass {
+  @prop(0x5c8, 'Int') accessor currentTimeMs: number
+}
 
-  /** 0x14 - int */
-  get contentValue () {
-    return this.address.add(0x14).readInt()
-  }
 
-  set contentValue (value: number) {
-    this.address.add(0x14).writeInt(value)
-  }
+class ACCityChest extends NativeClass {
+  @prop(0xC, 'Int') 
+  accessor cityValue: number
 
-  /** 0x20 - byte */
-  get depositIntervalMins () {
-    return this.address.add(0x20).readS8()
-  }
+  @prop(0x14, 'Int') 
+  accessor contentValue: number
 
-  /** 0x228 - int */
-  get nextDepositTimeSec () {
-    return this.address.add(0x228).readInt()
-  }
+  @prop(0x20, 'S8') 
+  accessor depositIntervalMins: number
 
-  /** 0x248 - dword */
+  @prop(0x228, 'Int') 
+  accessor nextDepositTimeSec: number
+
+  /** 0x248 - pointer */
   get timer () {
     return new ACTimer(this.address.add(0x248).readPointer())
   }
@@ -59,7 +45,7 @@ class ACGame {
   constructor () {(globalThis as any).game = this}
   module = Process.getModuleByName('AssassinsCreedIIGame.exe')
 
-  /** 0x1E16744 - dword */
+  /** 0x1E16744 - pointer */
   get cityChest () {
     return new ACCityChest(this.module.base.add(0x1E16744).readPointer())
   }
@@ -75,7 +61,39 @@ class ACGame {
 }
 
 const game = new ACGame()
+console.log(game.cityChest.contentValue)
 // console.log(`City value: ${game.cityChest.cityValue}`)
 // console.log(`Content value: ${game.cityChest.contentValue} ƒ`)
 // console.log(`Deposit interval: ${game.cityChest.depositIntervalMins}m`)
 // game.displayChestDeposit(game.cityChest.address, 69420)
+
+
+// get alls NativePointer methods that start with "read" as union string type and omit the "read" part
+type dataReadTypes = {
+  [K in keyof NativePointer]: K extends `read${string}` ? K : never
+}[keyof NativePointer]
+
+// dataReadTypes but with "read" replaced with "write"
+type dataTypes = dataReadTypes extends `read${infer R}` ? R : never
+
+// omit data types that require a parameter
+type dataNumberTypes = {
+  [K in dataTypes]: NativePointer[`read${K}`] extends () => number | Int64 | UInt64 | NativePointer ? K : never
+}[dataTypes]
+
+type dataOtherTypes = Exclude<dataTypes, dataNumberTypes>
+
+export function prop (offset: number, type: dataNumberTypes) {
+  return function <This extends NativeClass, Return>(target: ClassAccessorDecoratorTarget<This, Return>, context: ClassAccessorDecoratorContext<This, Return>) {
+    const result: ClassAccessorDecoratorResult<This, Return> = {
+      get(this: This) {
+        return this.address.add(offset)[`read${type}`]() as any
+      },
+      set(this: This, value: Return) {
+        this.address.add(offset)[`write${type}`](value as any)
+      },
+    };
+
+    return result;
+  }
+} 

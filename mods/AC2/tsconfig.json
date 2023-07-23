@@ -1,0 +1,9 @@
+{
+  // Error: only able to bundle ECMAScript modules, detected CommonJS
+  "compilerOptions": {
+    "target": "ES2015",
+    "module": "ES2015",
+    "moduleResolution": "Node",
+    "emitDecoratorMetadata": true,
+  }
+}
