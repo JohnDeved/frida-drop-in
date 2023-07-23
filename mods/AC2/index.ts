@@ -1,14 +1,13 @@
 /// <reference path="index.d.ts" />
 
 // make implementable class for "native" classes that must be instantiated with a pointer
-export abstract class NativeClass {
+abstract class NativeClass {
   constructor (public address: NativePointer) {}
 }
 
 class ACTimer extends NativeClass {
   @prop(0x5c8, 'Int') accessor currentTimeMs: number
 }
-
 
 class ACCityChest extends NativeClass {
   @prop(0xC, 'Int') 
@@ -81,19 +80,25 @@ type dataNumberTypes = {
   [K in dataTypes]: NativePointer[`read${K}`] extends () => number | Int64 | UInt64 | NativePointer ? K : never
 }[dataTypes]
 
-type dataOtherTypes = Exclude<dataTypes, dataNumberTypes>
+type dataLengthTypes = Exclude<dataTypes, dataNumberTypes>
 
-export function prop (offset: number, type: dataNumberTypes) {
-  return function <This extends NativeClass, Return>(target: ClassAccessorDecoratorTarget<This, Return>, context: ClassAccessorDecoratorContext<This, Return>) {
-    const result: ClassAccessorDecoratorResult<This, Return> = {
+// overload function
+function prop (offset: number, type: dataNumberTypes)
+function prop (offset: number, type: dataLengthTypes, length: number)
+function prop (offset: number, type: dataNumberTypes | dataLengthTypes, length?: number) {
+  return function <This extends NativeClass, Return>() {
+    return {
       get(this: This) {
+        if (length) {
+          type = type as dataLengthTypes
+          return this.address.add(offset)[`read${type}`](length) as any
+        }
+        type = type as dataNumberTypes
         return this.address.add(offset)[`read${type}`]() as any
       },
       set(this: This, value: Return) {
         this.address.add(offset)[`write${type}`](value as any)
       },
-    };
-
-    return result;
+    }
   }
-} 
+}
