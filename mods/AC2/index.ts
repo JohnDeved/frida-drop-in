@@ -1,6 +1,7 @@
 /// <reference path="index.d.ts" />
 
 // make implementable class for "native" classes that must be instantiated with a pointer
+// todo: must implement base. takes base as param and sets this.base = base
 abstract class NativeClass {
   constructor (public address: NativePointer) {}
 }
@@ -26,7 +27,14 @@ class ACCityChest extends NativeClass {
   get timer () {
     return new ACTimer(this.address.add(0x248).readPointer())
   }
-
+  
+  // todo: create a decorator for defining functions?
+  // @thisCall(0x0074b2c0, 'void', ['int32'])
+  // @func(0x0074b2c0, 'void', ['pointer', 'int32'])
+  // - or maybe more feasable to make a factory function that returns a function?
+  // hintDeposit = __thisCall(0x0074b2c0, 'void', ['int32'])
+  // hintDeposit = this.call(0x0074b2c0, 'void', ['int32'])
+  // - no pointer param needed, because it will be bound to the class instance and take the address from there
   hintDeposit (value: number) {
     game._thisCall.CityChest_hintDeposit(this.address, value)
   }
@@ -41,6 +49,9 @@ class ACCityChest extends NativeClass {
 }
 
 // todo: create abstract class for this > BaseClass, should implement NativeClass for consistency
+// base = this
+// address = this.module.base
+//
 // - implement module, pass module name as param?
 // - implement globalThis, if param is passed?
 class ACGame {
@@ -61,9 +72,6 @@ class ACGame {
     return new ACCityChest(this.module.base.add(0x1E16744).readPointer())
   }
 
-  // todo: create a decorator for defining functions?
-  // @thisCall(0x0074b2c0, 'void', ['int32'])
-  // @func(0x0074b2c0, 'void', ['pointer', 'int32'])
   _thisCall = {
     /* 0x0074b2c0 - void __thiscall CityChest::hintDeposit(CityChest *this, int) */
     CityChest_hintDeposit: new NativeFunction(this.module.base.add(0x0074b2c0), 'void', ['pointer', 'int32'], { abi: 'thiscall' }),
