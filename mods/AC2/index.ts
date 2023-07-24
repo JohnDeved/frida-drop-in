@@ -85,11 +85,9 @@ class ACGame extends BaseClass {
 }
 
 const game = new ACGame('AssassinsCreedIIGame.exe', true)
-console.log(game.cityChest.contentValue)
-// console.log(`City value: ${game.cityChest.cityValue}`)
-// console.log(`Content value: ${game.cityChest.contentValue} ƒ`)
-// console.log(`Deposit interval: ${game.cityChest.depositIntervalMins}m`)
-// game.displayChestDeposit(game.cityChest.address, 69420)
+console.log(`City value: ${game.cityChest.cityValue} ƒ`)
+console.log(`Content value: ${game.cityChest.contentValue} ƒ`)
+console.log(`Deposit interval: ${game.cityChest.depositIntervalMins}m`)
 
 
 // get alls NativePointer methods that start with "read" as union string type and omit the "read" part
