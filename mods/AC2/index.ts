@@ -1,7 +1,6 @@
 /// <reference path="index.d.ts" />
 
 // make implementable class for "native" classes that must be instantiated with a pointer
-// todo: must implement base. takes base as param and sets this.base = base
 abstract class NativeClass {
   constructor (public base: BaseClass, public address: NativePointer) {}
 }
@@ -60,12 +59,6 @@ class ACCityChest extends NativeClass {
   }
 }
 
-// todo: create abstract class for this > BaseClass, should implement NativeClass for consistency
-// base = this
-// address = this.module.base
-//
-// - implement module, pass module name as param?
-// - implement globalThis, if param is passed?
 class ACGame extends BaseClass {
   // todo: decorator support BaseClass, BaseClass should implement NativeClass
   // todo: pass class type for Class pointers
