@@ -3,7 +3,19 @@
 // make implementable class for "native" classes that must be instantiated with a pointer
 // todo: must implement base. takes base as param and sets this.base = base
 abstract class NativeClass {
-  constructor (public address: NativePointer) {}
+  constructor (public base: BaseClass, public address: NativePointer) {}
+}
+
+abstract class BaseClass implements NativeClass {
+  constructor (public moduleName: string, isGlobal = false) {
+    if (isGlobal) (globalThis as any).game = this
+    this.base = this
+    this.module = Process.getModuleByName(moduleName)
+    this.address = this.module.base
+  }
+  base: BaseClass
+  module: Module
+  address: NativePointer
 }
 
 class ACTimer extends NativeClass {
@@ -25,7 +37,7 @@ class ACCityChest extends NativeClass {
   
   /** 0x248 - pointer */
   get timer () {
-    return new ACTimer(this.address.add(0x248).readPointer())
+    return new ACTimer(this.base, this.address.add(0x248).readPointer())
   }
   
   // todo: create a decorator for defining functions?
@@ -54,10 +66,7 @@ class ACCityChest extends NativeClass {
 //
 // - implement module, pass module name as param?
 // - implement globalThis, if param is passed?
-class ACGame {
-  constructor () {(globalThis as any).game = this}
-  module = Process.getModuleByName('AssassinsCreedIIGame.exe')
-  
+class ACGame extends BaseClass {
   // todo: decorator support BaseClass, BaseClass should implement NativeClass
   // todo: pass class type for Class pointers
   // - class musst implement NativeClass
@@ -69,7 +78,7 @@ class ACGame {
   //
   /** 0x1E16744 - pointer */
   get cityChest () {
-    return new ACCityChest(this.module.base.add(0x1E16744).readPointer())
+    return new ACCityChest(this.base, this.module.base.add(0x1E16744).readPointer())
   }
 
   _thisCall = {
@@ -82,7 +91,7 @@ class ACGame {
   }
 }
 
-const game = new ACGame()
+const game = new ACGame('AssassinsCreedIIGame.exe', true)
 console.log(game.cityChest.contentValue)
 // console.log(`City value: ${game.cityChest.cityValue}`)
 // console.log(`Content value: ${game.cityChest.contentValue} ƒ`)
