@@ -21,7 +21,7 @@ class ACCityChest extends NativeClass {
 
   @prop(0x228, 'Int') 
   accessor nextDepositTimeSec: number
-
+  
   /** 0x248 - pointer */
   get timer () {
     return new ACTimer(this.address.add(0x248).readPointer())
@@ -40,15 +40,23 @@ class ACCityChest extends NativeClass {
   }
 }
 
+// todo: create abstract class for this
+// - implement module, pass module name as param?
+// - implement globalThis, if param is passed?
 class ACGame {
   constructor () {(globalThis as any).game = this}
   module = Process.getModuleByName('AssassinsCreedIIGame.exe')
-
+  
+  // todo: pass class type for Class pointers
+  // - class musst implement NativeClass
+  // - include base address so function can be defined?
+  // @prop(0x1E16744, ACCityChest) 
   /** 0x1E16744 - pointer */
   get cityChest () {
     return new ACCityChest(this.module.base.add(0x1E16744).readPointer())
   }
 
+  // todo: create a decorator for defining functions?
   _thisCall = {
     /* 0x0074b2c0 - void __thiscall CityChest::hintDeposit(CityChest *this, int) */
     CityChest_hintDeposit: new NativeFunction(this.module.base.add(0x0074b2c0), 'void', ['pointer', 'int32'], { abi: 'thiscall' }),
