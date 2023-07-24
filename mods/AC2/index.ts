@@ -60,7 +60,6 @@ class ACCityChest extends NativeClass {
 }
 
 class ACGame extends BaseClass {
-  // todo: decorator support BaseClass, BaseClass should implement NativeClass
   // todo: pass class type for Class pointers
   // - class musst implement NativeClass
   // - include base class so function can be defined?
@@ -106,6 +105,7 @@ type dataNumberTypes = {
 type dataLengthTypes = Exclude<dataTypes, dataNumberTypes>
 
 // overload function
+// todo: broken types... should not be possible to use outside of class that satisfies NativeClass
 function prop (offset: number, type: dataNumberTypes)
 function prop (offset: number, type: dataLengthTypes, length: number)
 function prop (offset: number, type: dataNumberTypes | dataLengthTypes, length?: number) {
